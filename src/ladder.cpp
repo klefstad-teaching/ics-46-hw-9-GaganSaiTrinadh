@@ -52,16 +52,14 @@ bool edit_distance_within(const string& str1, const string& str2, int d) {
 }
 
 bool is_adjacent(const string& word1, const string& word2) {
-   
-    if (word1 == word2) return true;
+    if (word1 == word2) return false; // Words should be different
     return edit_distance_within(word1, word2, 1);
 }
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
+    // Per test requirements, when begin_word equals end_word, return an empty vector
     if (begin_word == end_word) {
-        vector<string> result;
-        result.push_back(begin_word);
-        return result;
+        return vector<string>();
     }
     
     queue<vector<string>> ladder_queue;
@@ -85,7 +83,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
         for (const string& word : word_list) {
             if (visited.find(word) == visited.end() && is_adjacent(last_word, word)) {
                 visited.insert(word);
-                vector<string> new_ladder(ladder);
+                vector<string> new_ladder = ladder;
                 new_ladder.push_back(word);
                 ladder_queue.push(new_ladder);
             }
@@ -95,7 +93,7 @@ vector<string> generate_word_ladder(const string& begin_word, const string& end_
     return vector<string>();
 }
 
-void load_words(set<string> & word_list, const string& file_name) {
+void load_words(set<string>& word_list, const string& file_name) {
     ifstream infile(file_name);
     if (!infile) {
         cerr << "Error: could not open file " << file_name << endl;
@@ -114,12 +112,13 @@ void print_word_ladder(const vector<string>& ladder) {
         return;
     }
     
+    cout << "Word ladder found: ";
     for (size_t i = 0; i < ladder.size(); i++) {
         cout << ladder[i];
         if (i < ladder.size() - 1)
-            cout << " -> ";
+            cout << " ";
     }
-    cout << endl;
+    cout << " " << endl;
 }
 
 void verify_word_ladder() {
