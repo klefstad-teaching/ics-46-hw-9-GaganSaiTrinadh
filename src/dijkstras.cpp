@@ -55,7 +55,9 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
 
 void print_path(const vector<int>& v, int total) {
     if (v.empty()) {
-        cout << "No path found." << endl;
+        // Match exact expected output format for empty path
+        cout << endl;
+        cout << "Total cost is " << total << endl;
         return;
     }
     
@@ -65,6 +67,7 @@ void print_path(const vector<int>& v, int total) {
             cout << " ";
         }
     }
-    cout << endl;
+    // Add extra space at the end of the line to match expected output
+    cout << " " << endl;
     cout << "Total cost is " << total << endl;
 }
