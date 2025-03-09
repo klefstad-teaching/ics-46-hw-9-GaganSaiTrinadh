@@ -1,5 +1,4 @@
 #include "./dijkstras.h"
-#include <set>
 #include <algorithm>
 #include <queue>
 
@@ -36,7 +35,6 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
             }
         }
     }
-    
     return distance;
 }
 
@@ -46,12 +44,7 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
         return path;  // No path exists or invalid destination
     }
     
-    set<int> seen;
     for (int v = destination; v != -1; v = previous[v]) {
-        if (seen.count(v)) {
-            return vector<int>();  // Cycle detected, return empty path
-        }
-        seen.insert(v);
         path.push_back(v);
     }
     
@@ -61,7 +54,6 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
 
 void print_path(const vector<int>& v, int total) {
     if (v.empty()) {
-        // Match exact expected output format for empty path
         cout << endl;
         cout << "Total cost is " << total << endl;
         return;
@@ -73,7 +65,6 @@ void print_path(const vector<int>& v, int total) {
             cout << " ";
         }
     }
-    // Add extra space at the end of the line to match expected output
     cout << " " << endl;
     cout << "Total cost is " << total << endl;
 }
