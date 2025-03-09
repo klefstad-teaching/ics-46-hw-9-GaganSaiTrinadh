@@ -44,14 +44,18 @@ vector<int> extract_shortest_path(const vector<int>& distances, const vector<int
         return path;  // No path exists or invalid destination
     }
     
-    for (int v = destination; v != -1; v = previous[v]) {
+    int v = destination;
+    while (v != -1) {
         path.push_back(v);
+        if (v >= (int)previous.size() || v < 0) {
+            return {};  // Invalid predecessor, return empty path
+        }
+        v = previous[v];
     }
     
     reverse(path.begin(), path.end());
     return path;
 }
-
 void print_path(const vector<int>& v, int total) {
     if (v.empty()) {
         cout << endl;
