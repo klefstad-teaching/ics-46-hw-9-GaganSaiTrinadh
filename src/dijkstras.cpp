@@ -9,10 +9,12 @@ struct NodeComparator {
 };
 
 vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& previous) {
-    vector<int> distance(G.numVertices, INF);
-    previous.resize(G.numVertices, -1);
-    vector<bool> visited(G.numVertices, false);
+    int n = G.numVertices;
+    vector<int> distance(n, INF);
+    previous.assign(n, -1);  // Use assign instead of resize to ensure all values are -1
+    vector<bool> visited(n, false);
     
+    // Initialize priority queue
     priority_queue<pair<int, int>, vector<pair<int, int>>, NodeComparator> pq;
     distance[source] = 0;
     pq.push({source, 0});
@@ -28,6 +30,7 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
             int v = edge.dst;
             int weight = edge.weight;
             
+            // Check if we found a shorter path
             if (!visited[v] && distance[u] != INF && distance[u] + weight < distance[v]) {
                 distance[v] = distance[u] + weight;
                 previous[v] = u;
@@ -35,27 +38,36 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
             }
         }
     }
+    
     return distance;
 }
 
 vector<int> extract_shortest_path(const vector<int>& distances, const vector<int>& previous, int destination) {
     vector<int> path;
+    // Check if destination is valid and reachable
     if (destination < 0 || destination >= (int)distances.size() || distances[destination] == INF) {
-        return path;  // No path exists or invalid destination
+        return path; // No path exists or invalid destination
     }
     
-    int v = destination;
-    while (v != -1) {
-        path.push_back(v);
-        if (v >= (int)previous.size() || v < 0) {
-            return {};  // Invalid predecessor, return empty path
+    // Reconstruct path
+    for (int v = destination; v != -1; v = previous[v]) {
+        // Safety check to avoid infinite loops or invalid indices
+        if (v < 0 || v >= (int)previous.size()) {
+            break;
         }
-        v = previous[v];
+        path.push_back(v);
+    }
+    
+    // Check if we actually reached the source (previous[source] should be -1)
+    if (path.empty() || previous[path.back()] != -1) {
+        return {}; // Incomplete path
     }
     
     reverse(path.begin(), path.end());
     return path;
 }
+
+
 void print_path(const vector<int>& v, int total) {
     if (v.empty()) {
         cout << endl;
