@@ -52,6 +52,10 @@ bool edit_distance_within(const string& str1, const string& str2, int d) {
 }
 
 bool is_adjacent(const string& word1, const string& word2) {
+    if (word1 == word2) {
+        return true;
+    }
+
     if (word1.length() == word2.length()) {
         int diff = 0;
         for (size_t i = 0; i < word1.length(); ++i) {
@@ -76,61 +80,57 @@ bool is_adjacent(const string& word1, const string& word2) {
 }
 
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
-    if (begin_word == end_word) {
-        return vector<string>();
-    }
-
     queue<vector<string>> ladder_queue;
-    ladder_queue.push({begin_word});
-    
     set<string> visited;
+
+    ladder_queue.push({begin_word});
     visited.insert(begin_word);
-    
+
     while (!ladder_queue.empty()) {
         vector<string> ladder = ladder_queue.front();
         ladder_queue.pop();
         string last_word = ladder.back();
-        
+
         if (last_word == end_word) {
             return ladder;
         }
-        
+
+        vector<string> neighbors;
         for (size_t i = 0; i < last_word.size(); ++i) {
             string new_word = last_word;
             for (char c = 'a'; c <= 'z'; ++c) {
                 new_word[i] = c;
                 if (word_list.count(new_word) && !visited.count(new_word)) {
-                    visited.insert(new_word);
-                    vector<string> new_ladder = ladder;
-                    new_ladder.push_back(new_word);
-                    ladder_queue.push(new_ladder);
+                    neighbors.push_back(new_word);
                 }
             }
         }
-                for (size_t i = 0; i <= last_word.size(); ++i) {
+        for (size_t i = 0; i <= last_word.size(); ++i) {
             for (char c = 'a'; c <= 'z'; ++c) {
                 string new_word = last_word.substr(0, i) + c + last_word.substr(i);
                 if (word_list.count(new_word) && !visited.count(new_word)) {
-                    visited.insert(new_word);
-                    vector<string> new_ladder = ladder;
-                    new_ladder.push_back(new_word);
-                    ladder_queue.push(new_ladder);
+                    neighbors.push_back(new_word);
                 }
             }
         }
-        
         for (size_t i = 0; i < last_word.size(); ++i) {
             string new_word = last_word.substr(0, i) + last_word.substr(i + 1);
             if (word_list.count(new_word) && !visited.count(new_word)) {
-                visited.insert(new_word);
-                vector<string> new_ladder = ladder;
-                new_ladder.push_back(new_word);
-                ladder_queue.push(new_ladder);
+                neighbors.push_back(new_word);
             }
         }
+
+        sort(neighbors.begin(), neighbors.end());
+
+        for (const string& word : neighbors) {
+            visited.insert(word);
+            vector<string> new_ladder = ladder;
+            new_ladder.push_back(word);
+            ladder_queue.push(new_ladder);
+        }
     }
-    
-    return vector<string>();
+
+    return {}; 
 }
 void load_words(set<string>& word_list, const string& file_name) {
     ifstream infile(file_name);
